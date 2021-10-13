@@ -2,7 +2,6 @@ import { Form } from "../../components/form/form";
 import { Comment } from "../../components/comment/comment";
 import React, { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
-import { useLocalStorage } from "../../components/utils/useLocalStorage/useLocalStorage";
 import { useHistory } from "react-router";
 import back from "../../assets/backIcon.svg";
 
@@ -11,49 +10,51 @@ export const SingleComment = () => {
   const { location } = useHistory();
 
   const [data, setData] = useState({});
-  console.log(data.postComments, "data");
 
   // const [comment, setNewComment] = useLocalStorage("comment", []);
   const [comment, setNewComment] = useState([]);
 
-  const getCurrentCommentForPost =(currentData)=>{
-    let comments = localStorage.getItem("comment") ? JSON.parse(localStorage.getItem("comment")) : [];
-
+  let comments = localStorage.getItem("comment")
+    ? JSON.parse(localStorage.getItem("comment"))
+    : [];
+  const getCurrentCommentForPost = (currentData) => {
     let commentQ = [];
 
     for (let i = 0; i < currentData.postComments.length; i++) {
       for (let j = 0; j < comments.length; j++) {
-        if(currentData.postComments[i] === comments[j].id){
-          commentQ.push(comments[j])
+        if (currentData.postComments[i] === comments[j].id) {
+          // commentQ.push(comments[j])
+          commentQ = [...commentQ, comments[j]];
         }
       }
     }
 
-    console.log(`commentQ`, commentQ)
-    setNewComment([...comment, ...commentQ])
+    setNewComment([...comment, ...commentQ]);
     // return commentQ
-  }
+  };
 
-  console.log(`comment`, comment)
   const [replyState, setReplyState] = useState(false);
 
   const today = new Date();
   const time = today.getHours();
-  
-  const post = JSON.parse(localStorage.getItem("post"))
+
+  const post = JSON.parse(localStorage.getItem("post"));
   const updatePost = (commentId) => {
     let tempArray = post;
     let i = tempArray.findIndex((x) => x.id === data.id);
-    let updateData = {...data, postComments: [...data.postComments, commentId]};
-    tempArray[i] = updateData
+    let updateData = {
+      ...data,
+      postComments: [...data.postComments, commentId],
+    };
+    tempArray[i] = updateData;
     localStorage.setItem("post", JSON.stringify(tempArray));
   };
 
   const addComment = (entry) => {
     const newEntry = { id: "id-" + nanoid(), comment: entry, reply: [] };
-    updatePost(newEntry.id)
+    updatePost(newEntry.id);
     setNewComment([...comment, newEntry]);
-    localStorage.setItem("comment", JSON.stringify([...comment, newEntry]))
+    localStorage.setItem("comment", JSON.stringify([...comments, newEntry]));
   };
 
   const commentList = comment.map((item) => (
@@ -79,7 +80,7 @@ export const SingleComment = () => {
   useEffect(() => {
     if (location.state) {
       setData(location.state);
-      getCurrentCommentForPost(location.state)
+      getCurrentCommentForPost(location.state);
     }
   }, [location]);
 

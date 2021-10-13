@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router";
 import { Post } from "../../components/post/post";
-import { RequestProcessor } from "../../urls/requestProcessor";
 
 export const AllComments = () => {
   // const getAllComments =()=> {
@@ -12,7 +11,9 @@ export const AllComments = () => {
   //   })
   // }
 
-  const postFromLocal = localStorage.getItem("post") ? JSON.parse(localStorage.getItem("post")) : []
+  const postFromLocal = localStorage.getItem("post")
+    ? JSON.parse(localStorage.getItem("post"))
+    : [];
   const [postBlock, setPostBlock] = useState(postFromLocal);
   const history = useHistory();
 
@@ -22,13 +23,17 @@ export const AllComments = () => {
   };
 
   const newPost = (postEntry) => {
-    const postText = {id:"post-" + nanoid(), comment:postEntry, postComments: []};
-    setPostBlock([...postBlock, postText])
+    const postText = {
+      id: "post-" + nanoid(),
+      comment: postEntry,
+      postComments: [],
+    };
+    setPostBlock([...postBlock, postText]);
   };
 
   useEffect(() => {
-      localStorage.setItem("post", JSON.stringify(postBlock))
-  }, [postBlock])
+    localStorage.setItem("post", JSON.stringify(postBlock));
+  }, [postBlock]);
 
   return (
     <div className="all-comments">
